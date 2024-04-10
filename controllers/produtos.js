@@ -25,50 +25,64 @@ module.exports = {
             });
         }
     },
-    async cadastrarprodutos(request, response) {
-        try {
-            // parâmetros recebidos no corpo da requisição
-            const { prd_id, prd_nome, prd_valor, prd_unidade, ptp_id, prd_disponivel, prd_img, prd_destaque, prd_img_destaque, prd_descricao } = request.body;
-            // instrução SQL
-            const sql = `INSERT INTO usuarios 
-                (usu_nome, usu_email, usu_dt_nasc, usu_senha, usu_tipo, usu_ativo) 
-                VALUES (?, ?, ?, ?, ?, ?)`;
-            // definição dos dados a serem inseridos em um array
-            const values = [prd_id, prd_nome, prd_valor, prd_unidade, ptp_id, prd_disponivel, prd_img, prd_destaque, prd_img_destaque, prd_descricao];
-            // execução da instrução sql passando os parâmetros
-            const execSql = await db.query(sql, values);
-            // identificação do ID do registro inserido
-            const usu_id = execSql[0].insertId;
+        async cadastrarprodutos(request, response) {
+            try {
+                // parâmetros recebidos no corpo da requisição
+                const {prd_id, prd_nome, prd_valor, prd_unidade, ptp_id, prd_disponivel, prd_img, prd_destaque, prd_img_destaque, prd_descricao} = request.body;
+                // instrução SQL
+                const sql = `INSERT INTO produtos
+                (prd_id, prd_nome, prd_valor, prd_unidade, ptp_id, prd_disponivel, prd_img, prd_destaque, prd_img_destaque, prd_descricao)
+                VALUES (?, ?, ?, ?, ?, ?, ? ,? ,? ,?)`;
+                // definição dos dados a serem inseridos em um array
+                const values = [prd_id, prd_nome, prd_valor, prd_unidade, ptp_id, prd_disponivel, prd_img, prd_destaque, prd_img_destaque, prd_descricao];
+                // execução da instrução sql passando os parâmetros
+                const execSql = await db.query(sql, values);
+                // identificação do ID do registro inserido
+                const pd_id = execSql[0].insertId;
 
-            return response.status(200).json({
-                sucesso: true,
-                mensagem: 'Cadastro de usuário efetuado com sucesso.',
-                dados: usu_id
-                //mensSql: execSql
-            });
-        } catch (error) {
-            return response.status(500).json({
-                sucesso: false,
-                mensagem: 'Erro na requisição.',
-                dados: error.message
-            });
-        }
-    },
-    async editarProdutos(request, response) {
-        try {
-            return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Editar produtos.', 
-                dados: null
-            });
-        } catch (error) {
-            return response.status(500).json({
-                sucesso: false, 
-                mensagem: `Erro na requisição. -${error}`, 
-                dados: null
-            });
-        }
-    }, 
+                return response.status(200).json({
+                    sucesso: true,
+                    mensagem: 'Cadastro de produto efetuado com sucesso.',
+                    dados: pd_id
+                    //mensSql: execSql
+                });
+            } catch (error) {
+                return response.status(500).json({
+                    sucesso: false,
+                    mensagem: 'Erro na requisição.',
+                    dados: error.message
+                });
+            }
+        },
+        async editarProdutos(request, response) {
+            try {
+                // parâmetros recebidos pelo corpo da requisição
+                const { prd_nome, prd_valor, prd_unidade, prd_disponivel, prd_img, prd_destaque, prd_img_destaque, prd_descricao} = request.body;
+                // parâmetro recebido pela URL via params ex: /usuario/1
+                const { prd_id } = request.params;
+                // instruções SQL
+                const sql = `UPDATE produtos SET prd_nome = ?, prd_valor = ?, 
+                    prd_unidade = ?, prd_disponivel = ?, prd_img = ?, 
+                    prd_destaque = ?, prd_img_destaque = ?, prd_descricao = ? WHERE prd_id = ?;`;
+                // preparo do array com dados que serão atualizados
+                const values = [prd_nome, prd_valor, prd_unidade, prd_disponivel, prd_img, prd_destaque, prd_img_destaque, prd_descricao, prd_id];
+                // execução e obtenção de confirmação da atualização realizada
+                const atualizaDados = await db.query(sql, values);
+    
+                return response.status(200).json({
+                    sucesso: true,
+                    mensagem: `Produto ${prd_id} atualizado com sucesso!`,
+                    dados: atualizaDados[0].affectedRows
+                    // mensSql: atualizaDados
+                });
+            } catch (error) {
+                return response.status(500).json({
+                    sucesso: false,
+                    mensagem: 'Erro na requisição.',
+                    dados: error.message
+                });
+            }
+        },
     async apagarProdutos(request, response) {
         try {
             return response.status(200).json({
