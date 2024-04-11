@@ -25,7 +25,7 @@ router.post('/usuarios/login', UsuariosController.login); //body
 router.get('/produtos', ProdutosController.listarProdutos); //
 router.post('/produtos', ProdutosController.cadastrarprodutos); //
 router.patch('/produtos/:prd_id', ProdutosController.editarProdutos); //
-router.delete('/produtos', ProdutosController.apagarProdutos); //
+router.delete('/produtos/:prd_id', ProdutosController.apagarProdutos); //
 
 router.get('/ingredientes', IngredientesController.listarIngredientes); 
 router.post('/ingredientes', IngredientesController.cadastrarIngredientes); 

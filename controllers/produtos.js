@@ -83,20 +83,29 @@ module.exports = {
                 });
             }
         },
-    async apagarProdutos(request, response) {
-        try {
-            return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Apagar produtos.', 
-                dados: null
-            });
-        } catch (error) {
-            return response.status(500).json({
-                sucesso: false, 
-                mensagem: `Erro na requisição. -${error}`, 
-                dados: null
-            });
-        }
-    }, 
+        async apagarProdutos(request, response) {
+            try {
+                // parâmetro passado via url na chamada da api pelo front-end
+                const { prd_id } = request.params;
+                // comando de exclusão
+                const sql = `DELETE FROM produtos WHERE prd_id = ?`;
+                // array com parâmetros da exclusão
+                const values = [prd_id];
+                // executa instrução no banco de dados
+                const excluir = await db.query(sql, values);
+    
+                return response.status(200).json({
+                    sucesso: true,
+                    mensagem: `Produto ${prd_id} excluído com sucesso`,
+                    dados: excluir[0].affectedRows
+                });
+            } catch (error) {
+                return response.status(500).json({
+                    sucesso: false,
+                    mensagem: 'Erro na requisição.',
+                    dados: error.message
+                });
+            }
+        }, 
 }
 
